@@ -1,12 +1,29 @@
-# React + Vite
+# 💬 Flownium Chat
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+실시간 채팅 기능을 지원하는 토이 프로젝트입니다.  
+React + Vite + TailwindCSS + Socket.IO 기반으로 구현되었으며,  
+깔끔한 UI와 실시간 통신 성능을 모두 잡았습니다 ⚡
 
-Currently, two official plugins are available:
+---
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## 🚀 주요 기능
 
-## Expanding the ESLint configuration
+- 🔥 실시간 채팅 (Socket.IO 기반)
+- 🗨️ 채팅 말풍선 UI 구현
+- 🔄 자동 스크롤 (새 메시지 입력 시 맨 아래로 이동)
+- 🧼 중복 메시지 제거 (자신의 메시지는 1회만 표시)
+- 💻 반응형 레이아웃
 
-If you are developing a production application, we recommend using TypeScript and enable type-aware lint rules. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+---
+
+## 🛠️ 기술 스택
+
+| 구분             | 사용 기술                       |
+|------------------|---------------------------------|
+| Programming      | JavaScript (ES6+), Node.js      |
+| Frontend         | React, Vite, Tailwind CSS       |
+| Backend          | Express.js, Socket.IO, CORS     |
+| Database         | 없음 (메모리 기반 테스트용)     |
+| Version Control  | Git, GitHub                     |
+| Deployment       | (예정) Vercel / Render          |
+
