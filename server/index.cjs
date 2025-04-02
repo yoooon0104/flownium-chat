@@ -18,7 +18,7 @@ mongoose.connect(process.env.MONGO_URI)
 
 // 서버 설정
 const app = express();
-
+app.use(cors());
 app.use('/api/chatrooms', chatroomRouter);
 
 app.get('/', (req, res) => {
