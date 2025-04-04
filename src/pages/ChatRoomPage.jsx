@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { io } from 'socket.io-client';
+import axios from 'axios';
 import ChatBubble from '../components/ChatBubble';
 
 const socket = io('http://localhost:3010');
@@ -18,10 +19,29 @@ function ChatRoom() {
         chatEndRef.current?.scrollIntoView({ behavior: 'smooth' });
     };
 
+    // 💬 기존 메시지 불러오기
     useEffect(() => {
-        scrollToBottom();
-    }, [messages]);
+        const fetchMessages = async () => {
+            try {
+                const res = await axios.get(`http://localhost:3010/api/chatrooms/${roomId}/messages`);
+                const loaded = res.data.map((msg) => ({
+                    text: msg.text,
+                    user: msg.senderId?.nickname || '익명',
+                    time: new Date(msg.timestamp).toLocaleTimeString('ko-KR', {
+                        hour: '2-digit',
+                        minute: '2-digit',
+                    }),
+                    isMine: false, // 과거 메시지는 항상 상대방
+                }));
+                setMessages(loaded);
+            } catch (err) {
+                console.error('❌ 메시지 불러오기 실패:', err);
+            }
+        };
+        fetchMessages();
+    }, [roomId]);
 
+    // 💬 실시간 수신 처리
     useEffect(() => {
         socket.on('receive_message', (data) => {
             console.log('💬 수신한 메시지:', data);
@@ -32,6 +52,10 @@ function ChatRoom() {
             socket.off('receive_message');
         };
     }, []);
+
+    useEffect(() => {
+        scrollToBottom();
+    }, [messages]);
 
     const handleSend = () => {
         if (!input.trim()) return;
@@ -66,6 +90,7 @@ function ChatRoom() {
 
     return (
         <div className="flex flex-col h-screen bg-gray-100 p-4 relative">
+            {/* 닉네임 입력 모달 */}
             {showModal && (
                 <div className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
                     <div className="bg-white p-6 rounded-2xl shadow-lg flex flex-col items-center gap-4">
@@ -88,6 +113,7 @@ function ChatRoom() {
                 </div>
             )}
 
+            {/* 채팅 메시지 리스트 */}
             <div className="flex-1 overflow-y-auto mb-4">
                 {messages.map((msg, idx) => (
                     <ChatBubble
@@ -101,6 +127,7 @@ function ChatRoom() {
                 <div ref={chatEndRef} />
             </div>
 
+            {/* 메시지 입력창 */}
             <div className="flex gap-2">
                 <input
                     type="text"

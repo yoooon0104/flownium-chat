@@ -70,3 +70,9 @@ button:focus-visible {
     background-color: #f9f9f9;
   }
 }
+
+input {
+  background-color: white !important;
+  color: black !important;
+  border: 1px solid #ccc !important;
+}

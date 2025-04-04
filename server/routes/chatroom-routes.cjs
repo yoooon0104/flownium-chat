@@ -1,6 +1,6 @@
 const express = require('express');
-const ChatRoom = require('../models/ChatRoom.cjs');
-const Message = require('../models/Message.cjs');
+const ChatRoom = require('../models/chatroom.model.cjs');
+const Message = require('../models/message.model.cjs');
 
 const router = express.Router();
 
@@ -44,6 +44,20 @@ router.get('/', async(req, res) =>{
     } catch (err) {
         console.error('❌ 채팅방 목록 조회 실패:', err);
         res.status(500).json({ error: '서버 에러' });
+    }
+});
+
+router.get('/:id/messages', async (req, res) => {
+    try {
+        const { id } = req.params;
+        const messages = await Message.find({ chatRoomId: id})
+        .sort({ createdAt: 1})
+        .populate('senderId', 'nickname');
+
+        res.json(messages);
+    } catch (err) {
+        console.error('메세지 불러오기 실패 : ', err);
+        res.status(500).json({error: '서버 오류'});
     }
 });
 module.exports = router;
