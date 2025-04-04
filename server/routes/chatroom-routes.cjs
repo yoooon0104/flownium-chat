@@ -4,24 +4,23 @@ const Message = require('../models/message.model.cjs');
 
 const router = express.Router();
 
-//GET /chatrooms?userId=xxx
-router.get('/', async(req, res) =>{
+// 채팅방 목록 조회
+router.get('/', async (req, res) => {
     const { userId } = req.query;
-
-    if(!userId) {
-        return res.status(400).json({error: 'userId is required'});
+    if (!userId) {
+        return res.status(400).json({ error: 'userId is required' });
     }
 
     try {
-        const chatrooms = await ChatRoom.find({participants : userId})
-        .populate('participants', 'nickname profileImage')
-        .sort({updatedAt : -1});
+        const chatrooms = await ChatRoom.find({ participants: userId })
+            .populate('participants', 'nickname profileImage')
+            .sort({ updatedAt: -1 });
 
         const results = await Promise.all(
             chatrooms.map(async (room) => {
-                const lastMessage = await Message.findOne({ chatRoomId : room._id})
-                .sort({ createdAt : -1 })
-                .lean();
+                const lastMessage = await Message.findOne({ chatRoomId: room._id })
+                    .sort({ createdAt: -1 })
+                    .lean();
                 return {
                     _id: room._id,
                     roomName: room.roomName,
@@ -35,11 +34,11 @@ router.get('/', async(req, res) =>{
                             text: lastMessage.text,
                             timestamp: lastMessage.createdAt,
                         }
-                    : null,
+                        : null,
                 };
             })
         );
-        
+
         res.json(results);
     } catch (err) {
         console.error('❌ 채팅방 목록 조회 실패:', err);
@@ -47,17 +46,19 @@ router.get('/', async(req, res) =>{
     }
 });
 
+// 🔥 특정 채팅방 메시지 조회
 router.get('/:id/messages', async (req, res) => {
     try {
         const { id } = req.params;
-        const messages = await Message.find({ chatRoomId: id})
-        .sort({ createdAt: 1})
-        .populate('senderId', 'nickname');
+        const messages = await Message.find({ chatRoomId: id })
+            .sort({ createdAt: 1 })
+            .populate('senderId', 'nickname');
 
         res.json(messages);
     } catch (err) {
-        console.error('메세지 불러오기 실패 : ', err);
-        res.status(500).json({error: '서버 오류'});
+        console.error('❌ 메시지 불러오기 실패:', err);
+        res.status(500).json({ error: '서버 오류' });
     }
 });
+
 module.exports = router;
